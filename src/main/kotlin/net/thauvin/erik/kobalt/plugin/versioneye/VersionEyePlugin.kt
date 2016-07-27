@@ -77,16 +77,15 @@ class VersionEyePlugin @Inject constructor(val configActor: ConfigActor<VersionE
 
     @Task(name = "versionEye", description = "Update and check dependencies on VersionEye")
     fun versionEye(project: Project): TaskResult {
-
         if (debug) {
             System.setProperty("http.proxyHost", "127.0.0.1")
             System.setProperty("https.proxyHost", "127.0.0.1")
-            System.setProperty("http.proxyPort", "8888");
+            System.setProperty("http.proxyPort", "8888")
             System.setProperty("https.proxyPort", "8888")
         }
 
         val local = project.directory + "/local.properties"
-        
+
         configurationFor(project)?.let { config ->
             if (config.baseUrl.isBlank()) {
                 warn("Please specify a valid VersionEye base URL.")
@@ -130,7 +129,7 @@ class VersionEyePlugin @Inject constructor(val configActor: ConfigActor<VersionE
 
     private fun versionEyeUpdate(name: String, config: VersionEyeConfig, p: Properties): TaskResult {
         val projectId = p.getProperty(PROJECT_ID_PROPERTY)
-        val apiKey = p.getProperty(API_KEY_PROPERTY);
+        val apiKey = p.getProperty(API_KEY_PROPERTY)
         val endPoint = if (projectId.isNullOrBlank()) {
             "api/v2/projects"
         } else {
@@ -151,8 +150,9 @@ class VersionEyePlugin @Inject constructor(val configActor: ConfigActor<VersionE
             requestBody.addFormDataPart("team_name", config.team)
         }
 
-        // @TODO remove
-        requestBody.addFormDataPart("temp", "true")
+        if (debug) {
+            requestBody.addFormDataPart("temp", "true")
+        }
 
         val url = HttpUrl.parse(config.baseUrl).newBuilder()
                 .addPathSegments(endPoint)
@@ -179,13 +179,13 @@ class VersionEyePlugin @Inject constructor(val configActor: ConfigActor<VersionE
 @Directive
 class VersionEyeConfig() {
     var baseUrl = "https://www.versioneye.com/"
-    var failOnUnknownLicense = false;
-    var licenseCheck = false;
-    var name = "";
-    var organisation = "";
-    var securityCheck = false;
-    var team = "";
-    var visibility = true;
+    var failOnUnknownLicense = false
+    var licenseCheck = false
+    var name = ""
+    var organisation = ""
+    var securityCheck = false
+    var team = ""
+    var visibility = true
 }
 
 @Directive
