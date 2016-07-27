@@ -1,0 +1,6 @@
+<kobalt-plugin>
+    <name>VersionEye</name>
+    <plugin-actors>
+        <class-name>net.thauvin.erik.kobalt.plugin.versioneye.VersionEyePlugin</class-name>
+    </plugin-actors>
+</kobalt-plugin>
