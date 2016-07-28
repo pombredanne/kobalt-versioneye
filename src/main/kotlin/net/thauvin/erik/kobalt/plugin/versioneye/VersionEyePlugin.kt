@@ -92,7 +92,7 @@ class VersionEyePlugin @Inject constructor(val configActor: ConfigActor<VersionE
                 return TaskResult()
             } else {
                 val projectKey = System.getProperty(PROJECT_KEY_PROPERTY)
-                var apiKey = System.getenv(API_KEY_PROPERTY)
+                var apiKey = System.getProperty(API_KEY_PROPERTY)
                 val p = Properties()
                 Paths.get(local).let { path ->
                     if (path.toFile().exists()) {
