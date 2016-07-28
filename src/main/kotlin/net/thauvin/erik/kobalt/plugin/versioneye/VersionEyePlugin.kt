@@ -36,6 +36,7 @@ import com.beust.kobalt.TaskResult
 import com.beust.kobalt.api.*
 import com.beust.kobalt.api.annotation.Directive
 import com.beust.kobalt.api.annotation.Task
+import com.beust.kobalt.misc.log
 import com.beust.kobalt.misc.warn
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonObject
@@ -52,12 +53,10 @@ import java.util.*
 class VersionEyePlugin @Inject constructor(val configActor: ConfigActor<VersionEyeConfig>,
                                            val taskContributor: TaskContributor) :
         BasePlugin(), ITaskContributor, IConfigActor<VersionEyeConfig> by configActor {
-    private val debug = true
     private val API_KEY_PROPERTY = "versioneye.apiKey"
     private val PROJECT_KEY_PROPERTY = "versioneye.projectKey"
-    private val PROJECT_ID_PROPERTY = "versioneye.projectId"
-    private val ORG_PROPERTY = "versioneye.organisation"
-    private val TEAM_PROPERTY = "versioneye.team"
+
+    private val debug = System.getProperty("debug", "false").toBoolean()
     private val httpClient = OkHttpClient()
 
     // ITaskContributor
@@ -78,6 +77,7 @@ class VersionEyePlugin @Inject constructor(val configActor: ConfigActor<VersionE
     @Task(name = "versionEye", description = "Update and check dependencies on VersionEye")
     fun versionEye(project: Project): TaskResult {
         if (debug) {
+            log(1, "  Using Fiddler proxy 127.0.0.1:8888")
             System.setProperty("http.proxyHost", "127.0.0.1")
             System.setProperty("https.proxyHost", "127.0.0.1")
             System.setProperty("http.proxyPort", "8888")
@@ -91,7 +91,8 @@ class VersionEyePlugin @Inject constructor(val configActor: ConfigActor<VersionE
                 warn("Please specify a valid VersionEye base URL.")
                 return TaskResult()
             } else {
-                var apiKey = System.getProperty(API_KEY_PROPERTY)
+                val projectKey = System.getProperty(PROJECT_KEY_PROPERTY)
+                var apiKey = System.getenv(API_KEY_PROPERTY)
                 val p = Properties()
                 Paths.get(local).let { path ->
                     if (path.toFile().exists()) {
@@ -111,6 +112,10 @@ class VersionEyePlugin @Inject constructor(val configActor: ConfigActor<VersionE
                 }
                 p.setProperty(API_KEY_PROPERTY, apiKey)
 
+                if (!projectKey.isNullOrBlank()) {
+                    p.setProperty(PROJECT_KEY_PROPERTY, projectKey)
+                }
+
                 val result = versionEyeUpdate(if (config.name.isNotBlank()) {
                     config.name
                 } else {
@@ -128,26 +133,33 @@ class VersionEyePlugin @Inject constructor(val configActor: ConfigActor<VersionE
     }
 
     private fun versionEyeUpdate(name: String, config: VersionEyeConfig, p: Properties): TaskResult {
-        val projectId = p.getProperty(PROJECT_ID_PROPERTY)
+        val projectKey = p.getProperty(PROJECT_KEY_PROPERTY)
         val apiKey = p.getProperty(API_KEY_PROPERTY)
-        val endPoint = if (projectId.isNullOrBlank()) {
+        val endPoint = if (projectKey.isNullOrBlank()) {
             "api/v2/projects"
         } else {
-            "api/v2/project/$projectId"
+            "api/v2/project/$projectKey"
         }
 
         val file = File("../kobaltBuild/libs/kobalt-versioneye-0.4.0-beta.pom")
         val requestBody = MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
                 .addFormDataPart("name", name)
-                .addFormDataPart("upload", file.name, RequestBody.create(MediaType.parse("application/octet-stream"), file))
+                .addFormDataPart("upload", file.name,
+                        RequestBody.create(MediaType.parse("application/octet-stream"), file))
 
-        if (config.organisation.isNotBlank()) {
-            requestBody.addFormDataPart("orga_name", config.organisation)
+        val hasOrg = config.org.isNotBlank()
+
+        if (hasOrg) {
+            requestBody.addFormDataPart("orga_name", config.org)
         }
 
         if (config.team.isNotBlank()) {
-            requestBody.addFormDataPart("team_name", config.team)
+            if (hasOrg) {
+                requestBody.addFormDataPart("team_name", config.team)
+            } else {
+                warn("You must provide a VersionEye project organisation in order to specify a team.")
+            }
         }
 
         if (debug) {
@@ -182,7 +194,7 @@ class VersionEyeConfig() {
     var failOnUnknownLicense = false
     var licenseCheck = false
     var name = ""
-    var organisation = ""
+    var org = ""
     var securityCheck = false
     var team = ""
     var visibility = true
