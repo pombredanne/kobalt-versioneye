@@ -4,7 +4,7 @@
 
 [![VersionEye Logo](src/site/images/VersionEyeLogo.png)](https://www.versioneye.com)
 
-The plug-in will create and update projects on [VersionEye](https://www.versioneye.com/), a service that notifies you about out-dated dependencies, security vulnerabilities and license violations.
+The plug-in will create and update projects on [VersionEye](https://www.versioneye.com/), a service that notifies you about outdated dependencies, security vulnerabilities and license violations.
 
 To use the plug-in include the following in `Build.kt` file:
 
@@ -24,6 +24,8 @@ val p = project {
     
     }
 ```
+[View Example](https://github.com/ethauvin/kobalt-versioneye/blob/master/example/kobalt/src/Build.kt)
+
 To create or update your project on VersionEye, you will need an API key. If you are [signed up](https://www.versioneye.com/signup), you can find your API Key [here](https://www.versioneye.com/settings/api):
 
 [![VersionEye API Key](src/site/images/VersionEyeApiKey.png)](https://www.versioneye.com/settings/api)
@@ -46,7 +48,7 @@ The repot is based on the *Traffic Light* concept:
 2. <span style="color:yellow">Yellow</span> items may require some attention.
 3. <span style="color:red">Red</span> items will cause the build to fail.
 
-By default the plug-in is configured to only fail on known security vulnerability.
+By default the plug-in is configured to only fail on known security vulnerabilities.
 
 ## Global Configuration
 
