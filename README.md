@@ -40,7 +40,7 @@ This will instruct the plug-in to create and update your project on VersionEye. 
 
 Upon running the above command the plug-in will output something like:
 
-[![Example Report](src/site/images/ExampleReport.png)]
+![Example Report](src/site/images/ExampleReport.png)
 
 The repot is based on the *Traffic Light* concept:
 
