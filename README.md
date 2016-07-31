@@ -11,10 +11,9 @@ To use the plug-in include the following in `Build.kt` file:
 ```kotlin
 import net.thauvin.erik.kobalt.plugin.versioneye.*
 
-val pl = plugins("net.thauvin.erik:kobalt-versioneye:0.4.0-beta")
+val pl = plugins("net.thauvin.erik:kobalt-versioneye:")
 
 val p = project {
-
     name = "example"
     group = "com.example"
     artifactId = name
@@ -23,6 +22,7 @@ val p = project {
     versionEye {
     
     }
+}
 ```
 [View Example](https://github.com/ethauvin/kobalt-versioneye/blob/master/example/kobalt/src/Build.kt)
 
