@@ -69,7 +69,7 @@ versioneye.projectKey=YOUR_PROJECT_KEY
 ```
 ## Task Configuration
 
-Configuration options are available in `versionEye` task:
+Parameters are configurable in the `versionEye` task:
 
 ```
 versionEye {
@@ -99,7 +99,7 @@ The values are:
 | `vebose`    | To enable or disable extra information in the plug-in output.                                   | `true`                        |
 | `visbility` | To set the project's visibility on VersionEye, either `public` or `private`                     | `public`                      |
 
-Some of the options can be controlled temporarily from the command line, as follows:
+Some of the parameters can be controlled temporarily from the command line, as follows:
 
 ```bash
 ./kobaltw -Dve.colors=false versionEye
@@ -125,5 +125,3 @@ versionEye {
 | `Fail.licensesUnknownCheck` | Will trigger a failure on unknown licenses.                                                                                                                             |
 | `Fail.licensesCheck`        | Will trigger a failure on licences whitelist violations. Licenses and components whitelists can be configured on the [VersionEye](https://www.versioneye.com/) website. |
 | `Fail.securityCheck`        | Will trigger a failure on known security vulnerabilities, on by default.                                                                                                |
-
-
