@@ -246,15 +246,17 @@ class VersionEyePlugin @Inject constructor(val configActor: ConfigActor<VersionE
                 o.getAsJsonArray("dependencies").forEach {
                     val dep = it.asJsonObject
                     val depName = dep.get("name").asString
-                    val curVer = dep.get("version_current").asString
+                    val curVer = dep.get("version_current")
 
                     // Outdated dependencies
                     if (dep.get("outdated").asBoolean) {
-                        if (depsInfo.isNotEmpty()) {
-                            depsInfo.append(lf)
+                        if (!curVer.isJsonNull) {
+                            if (depsInfo.isNotEmpty()) {
+                                depsInfo.append(lf)
+                            }
+                            depsInfo.append(Utils.redLight("    - $depName -> "
+                                    + curVer.asString, out_number, isFailDeps, config.colors))
                         }
-                        depsInfo.append(Utils.redLight("    - $depName -> $curVer", out_number, isFailDeps,
-                                config.colors))
                     }
 
                     // Parse licenses
