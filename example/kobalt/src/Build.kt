@@ -7,7 +7,7 @@ import net.thauvin.erik.kobalt.plugin.versioneye.*
 val repos = repos()
 
 //val pl = plugins(file("../kobaltBuild/libs/kobalt-versioneye-0.4.0-beta.jar"))
-val pl = plugins("net.thauvin.erik:kobalt-versioneye:0.4.0-beta")
+val pl = plugins("net.thauvin.erik:kobalt-versioneye:")
 
 val p = project {
 
