@@ -44,9 +44,9 @@ Upon running the above command the plug-in will output something like:
 
 The repot is based on the *Traffic Light* concept:
 
-1. <span style="color:green">Green</span> items are clear.
-2. <span style="color:yellow">Yellow</span> items may require some attention.
-3. <span style="color:red">Red</span> items will cause the build to fail.
+1. Green items are clear.
+2. Yellow items may require some attention.
+3. Red items will cause the build to fail.
 
 By default the plug-in is configured to only fail on known security vulnerabilities.
 
