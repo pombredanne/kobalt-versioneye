@@ -337,10 +337,8 @@ class VersionEyePlugin @Inject constructor(val configActor: ConfigActor<VersionE
                         + Utils.plural("vulnerabilit", sv_count, "ies", "y")
                         + if (isFailSecurity && !config.colors) alt else "")
                 Utils.log(securityInfo, verbose)
-            }
 
-            // Show project url
-            if (!config.quiet) {
+                // Show project url
                 val baseUrl = if (config.baseUrl.endsWith('/')) config.baseUrl else config.baseUrl + '/'
                 log(1, "  View more at: ${baseUrl}user/projects/$projectKey")
             }
@@ -365,7 +363,7 @@ enum class Fail {
 class VersionEyeConfig() {
     var baseUrl = "https://www.versioneye.com/"
     var colors = true
-    var failSet: MutableSet<Fail> = mutableSetOf()
+    val failSet: MutableSet<Fail> = mutableSetOf(Fail.securityCheck)
     var name = ""
     var org = ""
     var quiet = false
@@ -374,6 +372,9 @@ class VersionEyeConfig() {
     var visibility = "public"
 
     fun failOn(vararg args: Fail) {
+        if (failSet.isNotEmpty()) {
+            failSet.clear()
+        }
         args.forEach {
             failSet.add(it)
         }
