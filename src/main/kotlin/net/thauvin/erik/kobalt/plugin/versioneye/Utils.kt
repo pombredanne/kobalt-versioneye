@@ -36,12 +36,19 @@ import com.beust.kobalt.misc.log
 
 open class Utils {
     companion object {
+        // Match failure option in set
+        fun isFail(failOn: Set<Fail>, match: Fail): Boolean {
+            return failOn.contains(match)
+        }
+
+        // Log text if applicable
         fun log(text: StringBuilder, flag: Boolean, level: Int = 1) {
             if (flag && text.length > 0) {
-                log(level, text.toString())
+                log(level, text)
             }
         }
 
+        // Pluralize text if applicable
         fun plural(text: String, count: Int, plural: String, singular: String = ""): String {
             if (count > 1) {
                 return text + plural
@@ -51,10 +58,11 @@ open class Utils {
 
         }
 
-        fun redLight(count: Int, fail: Boolean, colors: Boolean) : String {
+        fun redLight(count: Int, fail: Boolean, colors: Boolean): String {
             return redLight(count.toString(), count, fail, colors)
         }
 
+        // Green, yellow, red colored-text based on failure and count
         fun redLight(text: String, count: Int, fail: Boolean, colors: Boolean): String {
             if (colors) {
                 if (fail && count > 0) {
@@ -66,10 +74,6 @@ open class Utils {
                 }
             }
             return text
-        }
-
-        fun isFail(failOn: Set<Fail>, match: Fail) : Boolean {
-            return failOn.contains(match)
         }
     }
 }
