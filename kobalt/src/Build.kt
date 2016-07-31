@@ -45,7 +45,7 @@ val p = project {
     }
 
     dependencies {
-        compile("com.beust:kobalt-plugin-api:0.863")
+        compile("com.beust:kobalt-plugin-api:0.878")
     }
 
     dependenciesTest {
