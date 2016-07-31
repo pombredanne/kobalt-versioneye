@@ -42,9 +42,9 @@ Upon running the above command the plug-in will output something like:
 
 The repot is based on the *Traffic Light* concept:
 
-1. Green items are clear.
-2. Yellow items may require some attention.
-3. Red items will cause the build to fail.
+1. <span style="color:green">Green</span> items are clear.
+2. <span style="color:yellow">Yellow</span> items may require some attention.
+3. <span style="color:red">Red</span> items will cause the build to fail.
 
 By default the plug-in is configured to only fail on known security vulnerability.
 
@@ -52,20 +52,20 @@ By default the plug-in is configured to only fail on known security vulnerabilit
 
 You can configure the VersionEye **API Key** and **Project Key** (if you already have one) in one of two ways.
 
-1. Using the command line:
+Using the command line:
 
 ``` bash
 ./kobaltw -Dversioneye.ApiKey=YOUR_API_KEY -Dversionkey.projectKey=YOUR_PROJECT_KEY versionEye
 ```
-..* These keys will be save automatically in the `local.properties` file.
+These keys will be save automatically in the `local.properties` file.
 
-2. In the `local.properties` file:
+In the `local.properties` file:
 
 ```
 versioneye.ApiKey=YOUR_API_KEY
 versioneye.projectKey=YOUR_PROJECT_KEY
 ```
-### Task Configuration
+## Task Configuration
 
 Configuration options are available in `versionEye` task:
 
@@ -87,7 +87,7 @@ versionEye {
 The values are:
 
 | Value       | Description                                                                                     | Default                       |
---------------|-------------------------------------------------------------------------------------------------|-------------------------------|
+| :---------- | :---------------------------------------------------------------------------------------------- | :---------------------------- |
 | `baseUrl`   | For VersionEye Enterprise VM to use their own url, e.g. `https://versioneye.my-company.com/`    | `https://www.versioneye.com/` |
 | `colors`    | To enable (`true`) or disable (`false`) colors in the plug-in output.                           | `true`                        |
 | `name`      | The name of the VersionEye project, if none are specified the Kobalt project name will be used. | *none*                        |          
@@ -107,7 +107,7 @@ Some of the options can be controlled temporarily from the command line, as foll
 ./kobaltw -Dve.colors=false -Dve.verbose=false versionEye
 ```
 
-### Failures Configuration
+## Failures Configuration
 
 The `failOn` directive can be used to trigger specific failures:
 
@@ -117,11 +117,11 @@ versionEye {
 }
 ```
 
-|Fail On                      | Description                                                                                                                              |
-|-----------------------------|------------------------------------------------------------------------------------------------------------------------------------------|
-| `Fail.dependenciesCheck`    | Will triggered a failure on outdated dependencies.                                                                                       |
-| `Fail.licensesUnknownCheck` | Will trigger a failure on unknown licenses.                                                                                              |
-| `Fail.licensesCheck`        | Will trigger a failure on licences whitelist violations. Licenses and components whitelists can be configured on the VersionEye website. |
-| `Fail.securityCheck`        | Will trigger a failure on known security vulnerabilities, on by default.                                                                 |
+| Fail On                     | Description                                                                                                                                                             |
+| :-------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Fail.dependenciesCheck`    | Will triggered a failure on outdated dependencies.                                                                                                                      |
+| `Fail.licensesUnknownCheck` | Will trigger a failure on unknown licenses.                                                                                                                             |
+| `Fail.licensesCheck`        | Will trigger a failure on licences whitelist violations. Licenses and components whitelists can be configured on the [VersionEye](https://www.versioneye.com/) website. |
+| `Fail.securityCheck`        | Will trigger a failure on known security vulnerabilities, on by default.                                                                                                |
 
 
