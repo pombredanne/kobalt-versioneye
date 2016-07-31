@@ -36,6 +36,7 @@ import com.beust.kobalt.TaskResult
 import com.beust.kobalt.api.*
 import com.beust.kobalt.api.annotation.Directive
 import com.beust.kobalt.api.annotation.Task
+import com.beust.kobalt.misc.KobaltLogger
 import com.beust.kobalt.misc.log
 import com.beust.kobalt.misc.warn
 import com.google.gson.GsonBuilder
@@ -43,7 +44,6 @@ import com.google.gson.JsonObject
 import com.google.inject.Inject
 import com.google.inject.Singleton
 import okhttp3.*
-import java.io.File
 import java.io.FileOutputStream
 import java.nio.file.Files
 import java.nio.file.Paths
@@ -55,8 +55,11 @@ class VersionEyePlugin @Inject constructor(val configActor: ConfigActor<VersionE
         BasePlugin(), ITaskContributor, IConfigActor<VersionEyeConfig> by configActor {
     private val API_KEY_PROPERTY = "versioneye.apiKey"
     private val PROJECT_KEY_PROPERTY = "versioneye.projectKey"
+    private val COLORS_PROPERTY = "ve.colors"
+    private val VERBOSE_PROPERTY = "ve.verbose"
+    private val QUIET_PROPERTY = "ve.quiet"
 
-    private val debug = System.getProperty("debug", "false").toBoolean()
+    private val debug = System.getProperty("ve.debug", "false").toBoolean()
     private val httpClient = OkHttpClient()
 
     // ITaskContributor
@@ -86,11 +89,13 @@ class VersionEyePlugin @Inject constructor(val configActor: ConfigActor<VersionE
 
         val local = project.directory + "/local.properties"
 
+        // Load configuration
         configurationFor(project)?.let { config ->
             if (config.baseUrl.isBlank()) {
                 warn("Please specify a valid VersionEye base URL.")
                 return TaskResult()
             } else {
+                // Load properties
                 val projectKey = System.getProperty(PROJECT_KEY_PROPERTY)
                 var apiKey = System.getProperty(API_KEY_PROPERTY)
                 val p = Properties()
@@ -102,7 +107,7 @@ class VersionEyePlugin @Inject constructor(val configActor: ConfigActor<VersionE
                     }
                 }
 
-
+                // API key?
                 if (apiKey.isNullOrBlank()) {
                     apiKey = p.getProperty(API_KEY_PROPERTY)
                     if (apiKey.isNullOrBlank()) {
@@ -112,16 +117,25 @@ class VersionEyePlugin @Inject constructor(val configActor: ConfigActor<VersionE
                 }
                 p.setProperty(API_KEY_PROPERTY, apiKey)
 
+                // Project key?
                 if (!projectKey.isNullOrBlank()) {
                     p.setProperty(PROJECT_KEY_PROPERTY, projectKey)
                 }
 
+                // Config parameters
+                config.colors = System.getProperty(COLORS_PROPERTY, config.colors.toString()).toBoolean()
+                config.verbose = System.getProperty(VERBOSE_PROPERTY, config.verbose.toString()).toBoolean()
+                config.quiet = System.getProperty(QUIET_PROPERTY, config.quiet.toString()).toBoolean()
+
+                // Get pom & proceed with update
+                val pom = context.generatePom(project)
                 val result = versionEyeUpdate(if (config.name.isNotBlank()) {
                     config.name
                 } else {
                     project.name
-                }, config, p)
+                }, config, p, pom)
 
+                // Save properties
                 FileOutputStream(local).use { output ->
                     p.store(output, "")
                 }
@@ -132,28 +146,36 @@ class VersionEyePlugin @Inject constructor(val configActor: ConfigActor<VersionE
         return TaskResult()
     }
 
-    private fun versionEyeUpdate(name: String, config: VersionEyeConfig, p: Properties): TaskResult {
+    private fun versionEyeUpdate(name: String, config: VersionEyeConfig, p: Properties, pom: String): TaskResult {
         val projectKey = p.getProperty(PROJECT_KEY_PROPERTY)
         val apiKey = p.getProperty(API_KEY_PROPERTY)
-        val endPoint = if (projectKey.isNullOrBlank()) {
-            "api/v2/projects"
+        val filePartName: String
+        val endPoint: String
+
+        // Set endpoint
+        if (projectKey.isNullOrBlank()) {
+            endPoint = "api/v2/projects"
+            filePartName = "upload"
         } else {
-            "api/v2/project/$projectKey"
+            endPoint = "api/v2/projects/$projectKey"
+            filePartName = "project_file"
         }
 
-        val file = File("../kobaltBuild/libs/kobalt-versioneye-0.4.0-beta.pom")
+        // Build request body
         val requestBody = MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
                 .addFormDataPart("name", name)
-                .addFormDataPart("upload", file.name,
-                        RequestBody.create(MediaType.parse("application/octet-stream"), file))
+                .addFormDataPart(filePartName, "${config.name}.pom",
+                        RequestBody.create(MediaType.parse("application/octet-stream"), pom))
 
+        // Set organisation
         val hasOrg = config.org.isNotBlank()
 
         if (hasOrg) {
             requestBody.addFormDataPart("orga_name", config.org)
         }
 
+        // Set team
         if (config.team.isNotBlank()) {
             if (hasOrg) {
                 requestBody.addFormDataPart("team_name", config.team)
@@ -162,10 +184,20 @@ class VersionEyePlugin @Inject constructor(val configActor: ConfigActor<VersionE
             }
         }
 
+        // Set visibility
+        if (config.visibility.isNotBlank()) {
+            if (config.visibility.equals("private", true)) {
+                requestBody.addFormDataPart("visibility", "private")
+            } else if (config.visibility.equals("public", true)) {
+                requestBody.addFormDataPart("visibility", "public")
+            }
+        }
+
         if (debug) {
             requestBody.addFormDataPart("temp", "true")
         }
 
+        // Build request
         val url = HttpUrl.parse(config.baseUrl).newBuilder()
                 .addPathSegments(endPoint)
                 .setQueryParameter("api_key", apiKey)
@@ -175,29 +207,177 @@ class VersionEyePlugin @Inject constructor(val configActor: ConfigActor<VersionE
                 .post(requestBody.build())
                 .build()
 
+        // Execute and handle request
         val response = httpClient.newCall(request).execute()
         if (!response.isSuccessful) {
             warn("Unexpected response from VersionEye: " + response)
             return TaskResult()
         } else {
+            // Parse json response
             val builder = GsonBuilder()
             val o = builder.create().fromJson(response.body().charStream(), JsonObject::class.java)
-            println(o)
+
+            // Get project key
+            if (projectKey.isNullOrBlank()) {
+                p.setProperty(PROJECT_KEY_PROPERTY, o.get("id").asString)
+            }
+
+            // Get deps, license and security counts
+            val dep_number = o.get("dep_number").asInt
+            val out_number = o.get("out_number").asInt
+            val licenses_red = o.get("licenses_red").asInt
+            val licenses_unknown = o.get("licenses_unknown").asInt
+            val sv_count = o.get("sv_count").asInt
+
+            // Sets deps, license and security failures
+            val isFailDeps = Utils.isFail(config.failSet, Fail.dependenciesCheck)
+            val isFailLicense = Utils.isFail(config.failSet, Fail.licensesCheck)
+            val isFailUnknown = Utils.isFail(config.failSet, Fail.licensesUnknownCheck)
+            val isFailSecurity = Utils.isFail(config.failSet, Fail.securityCheck)
+
+            // Do nothing if quiet
+            if (!config.quiet) {
+                val lf = System.getProperty("line.separator")
+                val depsInfo = StringBuilder()
+                val licensesInfo = StringBuilder()
+                val securityInfo = StringBuilder()
+
+                // Parse dependencies
+                o.getAsJsonArray("dependencies").forEach {
+                    val dep = it.asJsonObject
+                    val depName = dep.get("name").asString
+                    val curVer = dep.get("version_current").asString
+
+                    // Outdated dependencies
+                    if (dep.get("outdated").asBoolean) {
+                        if (depsInfo.isNotEmpty()) {
+                            depsInfo.append(lf)
+                        }
+                        depsInfo.append(Utils.redLight("    - $depName -> $curVer", out_number, isFailDeps,
+                                config.colors))
+                    }
+
+                    // Parse licenses
+                    var whitelisted: Int = 0
+                    var unknowns: Int = 0
+                    val licenses = dep.get("licenses").asJsonArray
+                    if (licenses.size() > 0) {
+                        licenses.forEach {
+                            val license = it.asJsonObject
+                            val onWhitelist = license.get("on_whitelist")
+                            val onCwl = license.get("on_cwl")
+                            if (!onWhitelist.isJsonNull) {
+                                if (onWhitelist.asString.equals("false")) {
+                                    if (onCwl.isJsonNull) {
+                                        whitelisted++
+                                    } else if (!onCwl.toString().equals("true")) {
+                                        whitelisted++
+                                    }
+                                }
+                            }
+                        }
+                    } else {
+                        unknowns++
+                    }
+
+                    // Whitelisted
+                    if (whitelisted > 0) {
+                        if (licensesInfo.isNotEmpty()) {
+                            licensesInfo.append(lf)
+                        }
+                        licensesInfo.append(Utils.redLight("    - $depName: $whitelisted whitelist "
+                                + Utils.plural("violation", whitelisted, "s"), whitelisted, isFailLicense, config.colors))
+                    }
+
+                    // Unknowns
+                    if (unknowns > 0) {
+                        if (licensesInfo.isNotEmpty()) {
+                            licensesInfo.append(lf)
+                        }
+                        licensesInfo.append(Utils.redLight("    - $depName: $unknowns "
+                                + Utils.plural("unknown license", unknowns, "s"), unknowns, isFailUnknown, config.colors))
+                    }
+
+                    // Security vulnerabilities
+                    val security = dep.get("security_vulnerabilities")
+                    if (!security.isJsonNull) {
+                        if (securityInfo.length > 0) {
+                            securityInfo.append(lf)
+                        }
+                        val count = security.asJsonArray.size()
+
+                        securityInfo.append(Utils.redLight("    - $depName: $count "
+                                + Utils.plural("known issue", count, "s"), count, isFailSecurity, config.colors))
+                    }
+                }
+
+                // Non-verbose failure
+                val verbose = (KobaltLogger.LOG_LEVEL > 1 || config.verbose)
+                val alt = " [FAILED]"
+
+                // Log dependencies check results
+                log(1, "  Dependencies: "
+                        + Utils.redLight(out_number, isFailDeps, config.colors) + " outdated of $dep_number total"
+                        + if (isFailDeps && !config.colors) alt else "")
+                Utils.log(depsInfo, verbose)
+
+                // Log licenses check results
+                log(1, "  Licenses: "
+                        + Utils.redLight(licenses_red, isFailLicense, config.colors)
+                        + " whitelist, "
+                        + Utils.redLight(licenses_unknown, isFailUnknown, config.colors)
+                        + Utils.plural(" unknown", licenses_unknown, "s")
+                        + if ((isFailLicense || isFailUnknown) && !config.colors) alt else "")
+                Utils.log(licensesInfo, verbose)
+
+                // Log security check results
+                log(1, "  Security: "
+                        + Utils.redLight(sv_count, isFailSecurity, config.colors)
+                        + ' '
+                        + Utils.plural("vulnerabilit", sv_count, "ies", "y")
+                        + if (isFailSecurity && !config.colors) alt else "")
+                Utils.log(securityInfo, verbose)
+            }
+
+            // Show project url
+            if (!config.quiet) {
+                val baseUrl = if (config.baseUrl.endsWith('/')) config.baseUrl else config.baseUrl + '/'
+                log(1, "  View more at: ${baseUrl}user/projects/$projectKey")
+            }
+
+            // Task failure
+            if (out_number > 0 && isFailDeps
+                    || licenses_red > 0 && isFailLicense
+                    || licenses_unknown > 0 && isFailUnknown
+                    || sv_count > 0 && isFailSecurity) {
+                return TaskResult(false)
+            }
         }
         return TaskResult()
     }
 }
 
+enum class Fail {
+    dependenciesCheck, licensesUnknownCheck, licensesCheck, securityCheck
+}
+
 @Directive
 class VersionEyeConfig() {
     var baseUrl = "https://www.versioneye.com/"
-    var failOnUnknownLicense = false
-    var licenseCheck = false
+    var colors = true
+    var failSet: MutableSet<Fail> = mutableSetOf()
     var name = ""
     var org = ""
-    var securityCheck = false
+    var quiet = false
     var team = ""
-    var visibility = true
+    var verbose = true
+    var visibility = "public"
+
+    fun failOn(vararg args: Fail) {
+        args.forEach {
+            failSet.add(it)
+        }
+    }
 }
 
 @Directive
