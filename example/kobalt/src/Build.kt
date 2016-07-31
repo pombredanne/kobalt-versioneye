@@ -7,7 +7,7 @@ import net.thauvin.erik.kobalt.plugin.versioneye.*
 val repos = repos()
 
 val pl = plugins(file("../kobaltBuild/libs/kobalt-versioneye-0.4.0-beta.jar"))
-//val pl = plugins("net.thauvin.erik:kobalt-maven-local:0.5.0")
+//val pl = plugins("net.thauvin.erik:kobalt-versioneye:0.4.0-beta")
 
 val p = project {
 
@@ -25,12 +25,16 @@ val p = project {
     }
 
     dependencies {
-//        compile("com.beust:jcommander:1.48")
+        compile("com.beust:jcommander:1.47")
+        compile("org.slf4j:slf4j-api:")
+        compile("ch.qos.logback:logback-core:0.5")
+        compile("ch.qos.logback:logback-classic:1.1.7")
+        compile("commons-httpclient:commons-httpclient:jar:3.1")
+
     }
 
     dependenciesTest {
         compile("org.testng:testng:")
-
     }
 
     assemble {
@@ -41,8 +45,10 @@ val p = project {
     application {
         mainClass = "com.example.MainKt"
     }
-    
+
     versionEye {
-        //baseUrl = ""
+        org = "thauvin"
+        team = "Owners"
+	    failOn(Fail.licensesUnknownCheck,Fail.dependenciesCheck)
     }
 }
