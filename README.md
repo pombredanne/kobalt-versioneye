@@ -42,7 +42,7 @@ Upon running the above command the plug-in will output something like:
 
 ![Example Report](src/site/images/ExampleReport.png)
 
-The repot is based on the *Traffic Light* concept:
+The report is based on the *Traffic Light* concept:
 
 1. Green items are clear.
 2. Yellow items may require some attention.
