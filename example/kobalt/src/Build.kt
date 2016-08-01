@@ -6,7 +6,7 @@ import net.thauvin.erik.kobalt.plugin.versioneye.*
 
 val repos = repos()
 
-//val pl = plugins(file("../kobaltBuild/libs/kobalt-versioneye-0.4.2-beta.jar"))
+//val pl = plugins(file("../kobaltBuild/libs/kobalt-versioneye-0.4.3-beta.jar"))
 val pl = plugins("net.thauvin.erik:kobalt-versioneye:")
 
 val p = project {
@@ -30,7 +30,7 @@ val p = project {
         compile("ch.qos.logback:logback-core:0.5")
         compile("ch.qos.logback:logback-classic:1.1.7")
         compile("commons-httpclient:commons-httpclient:jar:3.1")
-        //compile("com.beust:kobalt-plugin-api:0.878")
+        compile("com.beust:kobalt-plugin-api:0.878")
     }
 
 
@@ -58,6 +58,6 @@ val p = project {
         // verbose = true
         // visibility = "public"
 
-        //failOn(Fail.securityCheck)
+        //failOn(Fail.licensesUnknownCheck, Fail.licensesCheck, Fail.securityCheck, Fail.dependenciesCheck)
     }
 }
