@@ -36,6 +36,15 @@ import com.beust.kobalt.misc.log
 
 open class Utils {
     companion object {
+        // Non-colors failure
+        fun alt(failed: Boolean): String {
+            if (failed) {
+                return " [FAILED]"
+            }
+
+            return ""
+        }
+
         // Match failure option in set
         fun isFail(failOn: Set<Fail>, match: Fail): Boolean {
             return failOn.contains(match)
