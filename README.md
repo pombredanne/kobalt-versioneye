@@ -88,16 +88,16 @@ versionEye {
 
 The values are:
 
-| Value       | Description                                                                                     | Default                       |
-| :---------- | :---------------------------------------------------------------------------------------------- | :---------------------------- |
-| `baseUrl`   | For VersionEye Enterprise VM to use their own url, e.g. `https://versioneye.my-company.com/`    | `https://www.versioneye.com/` |
-| `colors`    | To enable (`true`) or disable (`false`) colors in the plug-in output.                           | `true`                        |
-| `name`      | The name of the VersionEye project, if none are specified the Kobalt project name will be used. | *none*                        |          
-| `quiet`     | To completely disable output from the plug-in.                                                  | `false`                       |
-| `org`       | The VersionEye organisation, if any.                                                            | *none*                        |
-| `team`      | The VersionEye team, if any.                                                                    | *none*                        |
-| `vebose`    | To enable or disable extra information in the plug-in output.                                   | `true`                        |
-| `visbility` | To set the project's visibility on VersionEye, either `public` or `private`                     | `public`                      |
+| Value        | Description                                                                                     | Default                       |
+| :----------- | :---------------------------------------------------------------------------------------------- | :---------------------------- |
+| `baseUrl`    | For VersionEye Enterprise VM to use your own domain, e.g. `https://versioneye.my-company.com/`  | `https://www.versioneye.com/` |
+| `colors`     | To enable (`true`) or disable (`false`) colors in the plug-in output.                           | `true`                        |
+| `name`       | The name of the VersionEye project, if none is specified the Kobalt project name will be used.  | *none*                        |          
+| `quiet`      | To completely disable output from the plug-in.                                                  | `false`                       |
+| `org`        | The VersionEye organization, if any.                                                            | *none*                        |
+| `team`       | The VersionEye team, if any.                                                                    | *none*                        |
+| `verbose`    | To enable or disable extra information in the plug-in output.                                   | `true`                        |
+| `visibility` | To set the project's visibility on VersionEye, either `public` or `private`                     | `public`                      |
 
 Some of the parameters can be controlled temporarily from the command line, as follows:
 
@@ -123,5 +123,5 @@ versionEye {
 | :-------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `Fail.dependenciesCheck`    | Will triggered a failure on outdated dependencies.                                                                                                                      |
 | `Fail.licensesUnknownCheck` | Will trigger a failure on unknown licenses.                                                                                                                             |
-| `Fail.licensesCheck`        | Will trigger a failure on licences whitelist violations. Licenses and components whitelists can be configured on the [VersionEye](https://www.versioneye.com/) website. |
+| `Fail.licensesCheck`        | Will trigger a failure on licenses whitelist violations. Licenses and components whitelists can be configured on the [VersionEye](https://www.versioneye.com/) website. |
 | `Fail.securityCheck`        | Will trigger a failure on known security vulnerabilities, on by default.                                                                                                |
