@@ -165,7 +165,7 @@ class VersionEyePlugin @Inject constructor(val configActor: ConfigActor<VersionE
         val requestBody = MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
                 .addFormDataPart("name", name)
-                .addFormDataPart(filePartName, "${config.name}.pom",
+                .addFormDataPart(filePartName, "$name.pom",
                         RequestBody.create(MediaType.parse("application/octet-stream"), pom))
 
         // Set organisation
@@ -385,9 +385,7 @@ class VersionEyeConfig() {
         if (failSet.isNotEmpty()) {
             failSet.clear()
         }
-        args.forEach {
-            failSet.add(it)
-        }
+        failSet.addAll(args)
     }
 }
 
