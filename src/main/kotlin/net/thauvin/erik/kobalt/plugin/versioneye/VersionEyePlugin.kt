@@ -1,7 +1,7 @@
 /*
  * VersionEyePlugin.kt
  *
- * Copyright (c) 2016, Erik C. Thauvin (erik@thauvin.net)
+ * Copyright (c) 2016-2017, Erik C. Thauvin (erik@thauvin.net)
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -278,10 +278,10 @@ class VersionEyePlugin @Inject constructor(val configActor: ConfigActor<VersionE
                             val onWhitelist = license.get("on_whitelist")
                             val onCwl = license.get("on_cwl")
                             if (!onWhitelist.isJsonNull) {
-                                if (onWhitelist.asString.equals("false")) {
+                                if (onWhitelist.asString == "false") {
                                     if (onCwl.isJsonNull) {
                                         whitelisted++
-                                    } else if (!onCwl.toString().equals("true")) {
+                                    } else if (onCwl.toString() != "true") {
                                         whitelisted++
                                     }
                                 }
@@ -314,7 +314,7 @@ class VersionEyePlugin @Inject constructor(val configActor: ConfigActor<VersionE
                     // Security vulnerabilities
                     val security = dep.get("security_vulnerabilities")
                     if (!security.isJsonNull) {
-                        if (securityInfo.length > 0) {
+                        if (securityInfo.isNotEmpty()) {
                             securityInfo.append(lf)
                         }
                         val count = security.asJsonArray.size()
@@ -370,7 +370,7 @@ enum class Fail {
 }
 
 @Directive
-class VersionEyeConfig() {
+class VersionEyeConfig {
     var baseUrl = "https://www.versioneye.com/"
     var colors = true
     val failSet: MutableSet<Fail> = mutableSetOf(Fail.securityCheck)
@@ -381,6 +381,7 @@ class VersionEyeConfig() {
     var verbose = true
     var visibility = "public"
 
+    @Suppress("unused")
     fun failOn(vararg args: Fail) {
         if (failSet.isNotEmpty()) {
             failSet.clear()
@@ -389,6 +390,7 @@ class VersionEyeConfig() {
     }
 }
 
+@Suppress("unused")
 @Directive
 fun Project.versionEye(init: VersionEyeConfig.() -> Unit) {
     VersionEyeConfig().let { config ->

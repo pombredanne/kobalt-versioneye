@@ -11,7 +11,9 @@ To use the plug-in include the following in `Build.kt` file:
 ```kotlin
 import net.thauvin.erik.kobalt.plugin.versioneye.*
 
-val pl = plugins("net.thauvin.erik:kobalt-versioneye:")
+val bs = buildScript {
+    plugins("net.thauvin.erik:kobalt-versioneye:")
+}
 
 val p = project {
     name = "example"

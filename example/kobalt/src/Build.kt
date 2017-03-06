@@ -4,10 +4,9 @@ import com.beust.kobalt.plugin.application.*
 import com.beust.kobalt.plugin.kotlin.*
 import net.thauvin.erik.kobalt.plugin.versioneye.*
 
-val repos = repos()
-
-//val pl = plugins(file("../kobaltBuild/libs/kobalt-versioneye-0.4.3-beta.jar"))
-val pl = plugins("net.thauvin.erik:kobalt-versioneye:0.4.3-beta")
+val bs = buildScript {
+    plugins("net.thauvin.erik:kobalt-versioneye:0.4.3-beta")
+}
 
 val p = project {
 

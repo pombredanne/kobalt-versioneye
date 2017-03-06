@@ -1,14 +1,10 @@
 import com.beust.kobalt.plugin.packaging.assemble
 import com.beust.kobalt.plugin.publish.bintray
 import com.beust.kobalt.project
-import com.beust.kobalt.repos
 import org.apache.maven.model.Developer
 import org.apache.maven.model.License
 import org.apache.maven.model.Model
 import org.apache.maven.model.Scm
-
-val repos = repos()
-
 
 val p = project {
 

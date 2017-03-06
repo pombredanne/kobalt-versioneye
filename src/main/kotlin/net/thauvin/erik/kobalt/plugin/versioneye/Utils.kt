@@ -1,7 +1,7 @@
 /*
  * Utils.kt
  *
- * Copyright (c) 2016, Erik C. Thauvin (erik@thauvin.net)
+ * Copyright (c) 2016-2017, Erik C. Thauvin (erik@thauvin.net)
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -52,7 +52,7 @@ open class Utils {
 
         // Log text if applicable
         fun log(text: StringBuilder, flag: Boolean, level: Int = 1) {
-            if (flag && text.length > 0) {
+            if (flag && text.isNotEmpty()) {
                 log(level, text)
             }
         }
