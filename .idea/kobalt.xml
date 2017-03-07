@@ -12,6 +12,11 @@
           </set>
         </option>
       </KobaltProjectSettings>
+      <KobaltProjectSettings>
+        <option name="autoDownloadKobalt" value="true" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$/example" />
+        <option name="kobaltHome" value="$USER_HOME$/.kobalt/wrapper/dist/kobalt-1.0.3" />
+      </KobaltProjectSettings>
     </option>
   </component>
 </project>
