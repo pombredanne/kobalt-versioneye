@@ -11,7 +11,7 @@ val p = project {
     name = "kobalt-versioneye"
     group = "net.thauvin.erik"
     artifactId = name
-    version = "0.4.3-beta"
+    version = "0.4.4"
 
     pom = Model().apply {
         description = "VersionEye plug-in for the Kobalt build system."

@@ -1,11 +1,12 @@
-import com.beust.kobalt.*
-import com.beust.kobalt.plugin.packaging.*
-import com.beust.kobalt.plugin.application.*
-import com.beust.kobalt.plugin.kotlin.*
-import net.thauvin.erik.kobalt.plugin.versioneye.*
+import com.beust.kobalt.buildScript
+import com.beust.kobalt.plugin.application.application
+import com.beust.kobalt.plugin.packaging.assemble
+import com.beust.kobalt.project
+import net.thauvin.erik.kobalt.plugin.versioneye.versionEye
 
 val bs = buildScript {
-    plugins("net.thauvin.erik:kobalt-versioneye:0.4.3-beta")
+    //plugins(file("../kobaltBuild/libs/kobalt-versioneye-0.4.3-beta.jar"))
+    plugins("net.thauvin.erik:kobalt-versioneye:")
 }
 
 val p = project {
