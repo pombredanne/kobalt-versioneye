@@ -1,11 +1,10 @@
-import com.beust.kobalt.buildScript
+import com.beust.kobalt.*
 import com.beust.kobalt.plugin.application.application
 import com.beust.kobalt.plugin.packaging.assemble
-import com.beust.kobalt.project
-import net.thauvin.erik.kobalt.plugin.versioneye.versionEye
+import net.thauvin.erik.kobalt.plugin.versioneye.*
 
 val bs = buildScript {
-    //plugins(file("../kobaltBuild/libs/kobalt-versioneye-0.4.3-beta.jar"))
+    //plugins(file("../kobaltBuild/libs/kobalt-versioneye-0.4.4.jar"))
     plugins("net.thauvin.erik:kobalt-versioneye:")
 }
 
