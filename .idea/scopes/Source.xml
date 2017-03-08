@@ -1,3 +1,0 @@
-<component name="DependencyValidationManager">
-  <scope name="Source" pattern="file[kobalt-versioneye]:src/main/kotlin//*.kt" />
-</component>
