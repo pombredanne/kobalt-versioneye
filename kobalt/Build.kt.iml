@@ -10,9 +10,18 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module-library">
-      <library name="Kobalt: com.beust.kobalt:kobalt:jar:1.0.3">
+      <library name="Kobalt: com.beust.kobalt:kobalt:jar:1.0.5">
         <CLASSES>
-          <root url="jar://$USER_HOME$/.kobalt/wrapper/dist/kobalt-1.0.3/kobalt/wrapper/kobalt-1.0.3.jar!/" />
+          <root url="jar://$USER_HOME$/.kobalt/wrapper/dist/kobalt-1.0.5/kobalt/wrapper/kobalt-1.0.5.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="Kobalt: kobalt-versioneye-0.4.3-beta.jar">
+        <CLASSES>
+          <root url="jar://$USER_HOME$/.kobalt/cache/net/thauvin/erik/kobalt-versioneye/0.4.3-beta/kobalt-versioneye-0.4.3-beta.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />

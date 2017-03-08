@@ -1,10 +1,11 @@
 import com.beust.kobalt.*
-import com.beust.kobalt.plugin.application.application
-import com.beust.kobalt.plugin.packaging.assemble
+import com.beust.kobalt.plugin.application.*
+import com.beust.kobalt.plugin.packaging.*
 import net.thauvin.erik.kobalt.plugin.versioneye.*
 
+// ./kobaltw versionEye
+
 val bs = buildScript {
-    //plugins(file("../kobaltBuild/libs/kobalt-versioneye-0.4.4.jar"))
     plugins("net.thauvin.erik:kobalt-versioneye:")
 }
 
@@ -31,8 +32,6 @@ val p = project {
         compile("commons-httpclient:commons-httpclient:jar:3.1")
         compile("com.beust:kobalt-plugin-api:0.878")
     }
-
-
 
     dependenciesTest {
         compile("org.testng:testng:")
