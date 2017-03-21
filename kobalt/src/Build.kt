@@ -3,6 +3,7 @@ import com.beust.kobalt.file
 import com.beust.kobalt.misc.kobaltLog
 import com.beust.kobalt.plugin.application.application
 import com.beust.kobalt.plugin.packaging.assemble
+import com.beust.kobalt.plugin.publish.autoGitTag
 import com.beust.kobalt.plugin.publish.bintray
 import com.beust.kobalt.project
 import net.thauvin.erik.kobalt.plugin.versioneye.versionEye
@@ -73,8 +74,15 @@ val p = project {
         mavenJars {}
     }
 
+    autoGitTag {
+        enabled = true
+        message = "Version $version"
+    }
+
     bintray {
         publish = true
+        description = "Release version $version"
+        vcsTag = version
     }
 }
 
