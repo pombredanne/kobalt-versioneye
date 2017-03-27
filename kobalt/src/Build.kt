@@ -1,17 +1,11 @@
-import com.beust.kobalt.buildScript
-import com.beust.kobalt.file
-import com.beust.kobalt.misc.kobaltLog
-import com.beust.kobalt.plugin.application.application
-import com.beust.kobalt.plugin.packaging.assemble
-import com.beust.kobalt.plugin.publish.autoGitTag
-import com.beust.kobalt.plugin.publish.bintray
-import com.beust.kobalt.project
-import net.thauvin.erik.kobalt.plugin.versioneye.versionEye
-import org.apache.maven.model.Developer
-import org.apache.maven.model.License
-import org.apache.maven.model.Model
-import org.apache.maven.model.Scm
-import java.io.File
+import com.beust.kobalt.*
+import com.beust.kobalt.misc.*
+import com.beust.kobalt.plugin.application.*
+import com.beust.kobalt.plugin.packaging.*
+import com.beust.kobalt.plugin.publish.*
+import net.thauvin.erik.kobalt.plugin.versioneye.*
+import org.apache.maven.model.*
+import java.io.*
 
 val semver = "0.4.4"
 
@@ -53,21 +47,12 @@ val p = project {
         })
     }
 
-    sourceDirectories {
-        path("src/main/kotlin")
-    }
-
-    sourceDirectoriesTest {
-        path("src/test/kotlin")
-    }
-
     dependencies {
         compile("com.beust:kobalt-plugin-api:")
     }
 
     dependenciesTest {
         compile("org.testng:testng:")
-
     }
 
     assemble {
@@ -94,14 +79,6 @@ val example = project(p) {
     version = "0.1"
     directory = "example"
 
-    sourceDirectories {
-        path("src/main/kotlin")
-    }
-
-    sourceDirectoriesTest {
-        path("src/test/kotlin")
-    }
-
     dependencies {
         compile("com.beust:jcommander:1.47")
         //compile("org.slf4j:slf4j-api:")
@@ -110,8 +87,6 @@ val example = project(p) {
         compile("commons-httpclient:commons-httpclient:jar:3.1")
         compile("com.beust:kobalt-plugin-api:0.878")
     }
-
-
 
     dependenciesTest {
         compile("org.testng:testng:")
