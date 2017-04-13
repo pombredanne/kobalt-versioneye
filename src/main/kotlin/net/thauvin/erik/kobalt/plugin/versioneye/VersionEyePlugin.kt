@@ -87,7 +87,7 @@ class VersionEyePlugin @Inject constructor(val configActor: ConfigActor<VersionE
             System.setProperty("https.proxyPort", "8888")
         }
 
-        val local = project.directory + "/local.properties"
+        val local = "${project.directory}/local.properties"
 
         // Load configuration
         configurationFor(project)?.let { config ->
@@ -210,7 +210,7 @@ class VersionEyePlugin @Inject constructor(val configActor: ConfigActor<VersionE
         // Execute and handle request
         val response = httpClient.newCall(request).execute()
         if (!response.isSuccessful) {
-            warn("Unexpected response from VersionEye: " + response)
+            warn("Unexpected response from VersionEye: $response")
             return TaskResult()
         } else {
             // Parse json response
