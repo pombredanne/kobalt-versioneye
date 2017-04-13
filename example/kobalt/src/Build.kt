@@ -16,20 +16,12 @@ val p = project {
     artifactId = name
     version = "0.1"
 
-    sourceDirectories {
-        path("src/main/kotlin")
-    }
-
-    sourceDirectoriesTest {
-        path("src/test/kotlin")
-    }
-
     dependencies {
         compile("com.beust:jcommander:1.47")
         //compile("org.slf4j:slf4j-api:")
         compile("ch.qos.logback:logback-core:0.5")
         compile("ch.qos.logback:logback-classic:1.1.7")
-        compile("commons-httpclient:commons-httpclient:jar:3.1")
+        compile("commons-httpclient:commons-httpclient:3.1")
         compile("com.beust:kobalt-plugin-api:0.878")
     }
 
