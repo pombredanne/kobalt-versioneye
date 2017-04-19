@@ -6,6 +6,7 @@ import net.thauvin.erik.kobalt.plugin.versioneye.*
 // ./kobaltw versionEye
 
 val bs = buildScript {
+    //plugins(file("../kobaltBuild/libs/kobalt-versioneye-0.4.5.jar"))
     plugins("net.thauvin.erik:kobalt-versioneye:")
 }
 

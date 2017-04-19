@@ -1,32 +1,19 @@
-import com.beust.kobalt.*
-import com.beust.kobalt.misc.*
-import com.beust.kobalt.plugin.application.*
-import com.beust.kobalt.plugin.packaging.*
-import com.beust.kobalt.plugin.publish.*
-import net.thauvin.erik.kobalt.plugin.versioneye.*
+import com.beust.kobalt.plugin.packaging.assemble
+import com.beust.kobalt.plugin.publish.autoGitTag
+import com.beust.kobalt.plugin.publish.bintray
+import com.beust.kobalt.profile
+import com.beust.kobalt.project
 import org.apache.maven.model.*
-import java.io.*
 
-val semver = "0.4.4"
-
-val bs = buildScript {
-    val p = with(File("kobaltBuild/libs/kobalt-versioneye-$semver.jar")) {
-        if (exists()) {
-            kobaltLog(1, "  >>> Using: $path")
-            file(path)
-        } else {
-            "net.thauvin.erik:kobalt-versioneye:"
-        }
-    }
-    plugins(p)
-}
+val dev by profile()
+val kobaltDependency = if (dev) "kobalt" else "kobalt-plugin-api"
 
 val p = project {
 
     name = "kobalt-versioneye"
     group = "net.thauvin.erik"
     artifactId = name
-    version = semver
+    version = "0.4.5"
 
     pom = Model().apply {
         description = "VersionEye plug-in for the Kobalt build system."
@@ -48,7 +35,7 @@ val p = project {
     }
 
     dependencies {
-        compile("com.beust:kobalt-plugin-api:")
+        compile("com.beust:$kobaltDependency:")
     }
 
     dependenciesTest {
@@ -70,48 +57,3 @@ val p = project {
         vcsTag = version
     }
 }
-
-val example = project(p) {
-
-    name = "example"
-    group = "com.example"
-    artifactId = name
-    version = "0.1"
-    directory = "example"
-
-    dependencies {
-        compile("com.beust:jcommander:1.47")
-        //compile("org.slf4j:slf4j-api:")
-        compile("ch.qos.logback:logback-core:0.5")
-        compile("ch.qos.logback:logback-classic:1.1.7")
-        compile("commons-httpclient:commons-httpclient:jar:3.1")
-        compile("com.beust:kobalt-plugin-api:0.878")
-    }
-
-    dependenciesTest {
-        compile("org.testng:testng:")
-    }
-
-    assemble {
-        jar {
-        }
-    }
-
-    application {
-        mainClass = "com.example.MainKt"
-    }
-
-    versionEye {
-        // baseUrl = "https://www.versioneye.com/"
-        // colors = true
-        // name = ""
-        // org = ""
-        // quiet = false
-        // team = ""
-        // verbose = true
-        // visibility = "public"
-
-        //failOn(Fail.licensesUnknownCheck, Fail.licensesCheck, Fail.securityCheck, Fail.dependenciesCheck)
-    }
-}
-
