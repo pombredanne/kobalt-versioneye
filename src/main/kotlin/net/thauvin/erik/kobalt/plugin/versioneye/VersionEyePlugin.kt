@@ -36,9 +36,7 @@ import com.beust.kobalt.TaskResult
 import com.beust.kobalt.api.*
 import com.beust.kobalt.api.annotation.Directive
 import com.beust.kobalt.api.annotation.Task
-import com.beust.kobalt.misc.KobaltLogger
-import com.beust.kobalt.misc.log
-import com.beust.kobalt.misc.warn
+import com.beust.kobalt.misc.*
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonObject
 import com.google.inject.Inject
@@ -80,11 +78,11 @@ class VersionEyePlugin @Inject constructor(val configActor: ConfigActor<VersionE
     @Task(name = "versionEye", description = "Update and check dependencies on VersionEye")
     fun versionEye(project: Project): TaskResult {
         if (debug) {
-            log(1, "  Using Fiddler proxy 127.0.0.1:8888")
+            log(1, "  Using Fiddler proxy 127.0.0.1:9898")
             System.setProperty("http.proxyHost", "127.0.0.1")
             System.setProperty("https.proxyHost", "127.0.0.1")
-            System.setProperty("http.proxyPort", "8888")
-            System.setProperty("https.proxyPort", "8888")
+            System.setProperty("http.proxyPort", "9898")
+            System.setProperty("https.proxyPort", "9898")
         }
 
         val local = "${project.directory}/local.properties"
