@@ -20,9 +20,9 @@ val p = project {
     group = "com.example"
     artifactId = name
     version = "0.1"
-    
+
     versionEye {
-    
+
     }
 }
 ```
@@ -94,7 +94,7 @@ The values are:
 | :----------- | :---------------------------------------------------------------------------------------------- | :---------------------------- |
 | `baseUrl`    | For VersionEye Enterprise VM to use your own domain, e.g. `https://versioneye.my-company.com/`  | `https://www.versioneye.com/` |
 | `colors`     | To enable (`true`) or disable (`false`) colors in the plug-in output.                           | `true`                        |
-| `name`       | The name of the VersionEye project, if none is specified the Kobalt project name will be used.  | *none*                        |          
+| `name`       | The name of the VersionEye project, if none is specified the Kobalt project name will be used.  | *none*                        |
 | `quiet`      | To completely disable output from the plug-in.                                                  | `false`                       |
 | `org`        | The VersionEye organization, if any.                                                            | *none*                        |
 | `team`       | The VersionEye team, if any.                                                                    | *none*                        |
