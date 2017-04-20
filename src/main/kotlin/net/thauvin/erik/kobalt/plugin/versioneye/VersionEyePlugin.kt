@@ -42,6 +42,7 @@ import com.google.gson.JsonObject
 import com.google.inject.Inject
 import com.google.inject.Singleton
 import okhttp3.*
+import okhttp3.logging.HttpLoggingInterceptor
 import java.io.FileOutputStream
 import java.nio.file.Files
 import java.nio.file.Paths
@@ -58,7 +59,15 @@ class VersionEyePlugin @Inject constructor(val configActor: ConfigActor<VersionE
     private val QUIET_PROPERTY = "ve.quiet"
 
     private val debug = System.getProperty("ve.debug", "false").toBoolean()
-    private val httpClient = OkHttpClient()
+    private val fiddler = System.getProperty("ve.fiddler", "false").toBoolean()
+
+    private val httpClient = if (!debug) {
+        OkHttpClient()
+    } else {
+        OkHttpClient().newBuilder().addInterceptor(
+                HttpLoggingInterceptor({ message -> log(2, "[HTTP] $message") })
+                        .apply { level = HttpLoggingInterceptor.Level.BODY }).build()
+    }
 
     // ITaskContributor
     override fun tasksFor(project: Project, context: KobaltContext): List<DynamicTask> = taskContributor.dynamicTasks
@@ -77,12 +86,13 @@ class VersionEyePlugin @Inject constructor(val configActor: ConfigActor<VersionE
 
     @Task(name = "versionEye", description = "Update and check dependencies on VersionEye")
     fun versionEye(project: Project): TaskResult {
-        if (debug) {
-            log(1, "  Using Fiddler proxy 127.0.0.1:9898")
+        if (fiddler) {
+            val port = 9898
+            log(1, "  Using Fiddler proxy 127.0.0.1:$port")
             System.setProperty("http.proxyHost", "127.0.0.1")
             System.setProperty("https.proxyHost", "127.0.0.1")
-            System.setProperty("http.proxyPort", "9898")
-            System.setProperty("https.proxyPort", "9898")
+            System.setProperty("http.proxyPort", "$port")
+            System.setProperty("https.proxyPort", "$port")
         }
 
         val local = "${project.directory}/local.properties"
@@ -205,7 +215,7 @@ class VersionEyePlugin @Inject constructor(val configActor: ConfigActor<VersionE
                 .post(requestBody.build())
                 .build()
 
-        // Execute and handle request
+        // Execute and handle reques
         val response = httpClient.newCall(request).execute()
         if (!response.isSuccessful) {
             warn("Unexpected response from VersionEye: $response")

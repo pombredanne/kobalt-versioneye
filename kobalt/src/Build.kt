@@ -1,9 +1,13 @@
+import com.beust.kobalt.*
 import com.beust.kobalt.plugin.packaging.assemble
 import com.beust.kobalt.plugin.publish.autoGitTag
 import com.beust.kobalt.plugin.publish.bintray
-import com.beust.kobalt.profile
-import com.beust.kobalt.project
 import org.apache.maven.model.*
+
+val bs = buildScript {
+    plugins("net.thauvin.erik:kobalt-maven-local:")
+    repos(localMaven())
+}
 
 val dev by profile()
 val kobaltDependency = if (dev) "kobalt" else "kobalt-plugin-api"
@@ -36,6 +40,7 @@ val p = project {
 
     dependencies {
         compile("com.beust:$kobaltDependency:")
+        compile("com.squareup.okhttp3:logging-interceptor:jar:3.6.0")
     }
 
     dependenciesTest {
