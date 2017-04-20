@@ -31,9 +31,9 @@
  */
 package net.thauvin.erik.kobalt.plugin.versioneye
 
-import com.beust.kobalt.*
-import org.testng.*
-import org.testng.annotations.*
+import com.beust.kobalt.AsciiArt
+import org.testng.Assert
+import org.testng.annotations.Test
 
 @Test
 class UtilsTest {
@@ -78,7 +78,7 @@ class UtilsTest {
                 "redLight(count:1, fail:false, colors:true)")
         Assert.assertEquals(Utils.redLight(0, false, true), AsciiArt.GREEN + 0 + AsciiArt.RESET,
                 "redLight(count:0, fail:false, colors:true)")
-        Assert.assertEquals(Utils.redLight(1, false, false), text,
+        Assert.assertEquals(Utils.redLight(1, false, false), "1",
                 "redLight(count:1, fail:false, colors:false)")
     }
 }
