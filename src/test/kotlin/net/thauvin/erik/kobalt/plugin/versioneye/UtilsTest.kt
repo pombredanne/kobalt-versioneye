@@ -37,6 +37,7 @@ import org.testng.annotations.Test
 
 @Test
 class UtilsTest {
+    val text = "This is a test"
 
     @Test
     fun alt() {
@@ -61,8 +62,25 @@ class UtilsTest {
     }
 
     @Test
+    fun red() {
+        Assert.assertEquals(Utils.red(text), AsciiArt.RED + text + AsciiArt.RESET, "red($text)")
+        Assert.assertEquals(Utils.red(text, false), text, "red($text)")
+    }
+
+    @Test
+    fun yellow() {
+        Assert.assertEquals(Utils.yellow(text), AsciiArt.YELLOW + text + AsciiArt.RESET, "yellow($text)")
+        Assert.assertEquals(Utils.yellow(text, false), text, "yellow($text)")
+    }
+
+    @Test
+    fun green() {
+        Assert.assertEquals(Utils.green(text), AsciiArt.GREEN + text + AsciiArt.RESET, "green($text)")
+        Assert.assertEquals(Utils.green(text, false), text, "green($text)")
+    }
+
+    @Test
     fun redLight() {
-        val text = "This is a test"
         Assert.assertEquals(Utils.redLight(text, 1, true, true), AsciiArt.RED + text + AsciiArt.RESET,
                 "redLight($text, count:1, fail:true, colors:true)")
         Assert.assertEquals(Utils.redLight(text, 1, false, true), AsciiArt.YELLOW + text + AsciiArt.RESET,
