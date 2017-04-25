@@ -22,6 +22,33 @@
       </library>
     </orderEntry>
     <orderEntry type="module-library">
+      <library name="Kobalt: com.squareup.okio:okio:jar:1.12.0">
+        <CLASSES>
+          <root url="jar://$USER_HOME$/.kobalt/cache/com/squareup/okio/okio/1.12.0/okio-1.12.0.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="Kobalt: com.squareup.okhttp3:okhttp:jar:3.7.0">
+        <CLASSES>
+          <root url="jar://$USER_HOME$/.kobalt/cache/com/squareup/okhttp3/okhttp/3.7.0/okhttp-3.7.0.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="Kobalt: com.squareup.okhttp3:logging-interceptor:jar:3.7.0">
+        <CLASSES>
+          <root url="jar://$USER_HOME$/.kobalt/cache/com/squareup/okhttp3/logging-interceptor/3.7.0/logging-interceptor-3.7.0.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
       <library name="Kobalt: org.opentest4j:opentest4j:jar:1.0.0-M2">
         <CLASSES>
           <root url="jar://$USER_HOME$/.kobalt/cache/org/opentest4j/opentest4j/1.0.0-M2/opentest4j-1.0.0-M2.jar!/" />
@@ -463,15 +490,6 @@
       </library>
     </orderEntry>
     <orderEntry type="module-library">
-      <library name="Kobalt: com.squareup.okhttp3:okhttp:jar:3.3.0">
-        <CLASSES>
-          <root url="jar://$USER_HOME$/.kobalt/cache/com/squareup/okhttp3/okhttp/3.3.0/okhttp-3.3.0.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
       <library name="Kobalt: com.google.code.gson:gson:jar:2.7">
         <CLASSES>
           <root url="jar://$USER_HOME$/.kobalt/cache/com/google/code/gson/gson/2.7/gson-2.7.jar!/" />
@@ -574,15 +592,6 @@
       <library name="Kobalt: org.eclipse.aether:aether-impl:jar:1.0.2.v20150114">
         <CLASSES>
           <root url="jar://$USER_HOME$/.kobalt/cache/org/eclipse/aether/aether-impl/1.0.2.v20150114/aether-impl-1.0.2.v20150114.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library name="Kobalt: com.squareup.okio:okio:jar:1.8.0">
-        <CLASSES>
-          <root url="jar://$USER_HOME$/.kobalt/cache/com/squareup/okio/okio/1.8.0/okio-1.8.0.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
