@@ -36,13 +36,16 @@ import com.beust.kobalt.TaskResult
 import com.beust.kobalt.api.*
 import com.beust.kobalt.api.annotation.Directive
 import com.beust.kobalt.api.annotation.Task
-import com.beust.kobalt.misc.*
+import com.beust.kobalt.misc.KobaltLogger
+import com.beust.kobalt.misc.log
+import com.beust.kobalt.misc.warn
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonObject
 import com.google.inject.Inject
 import com.google.inject.Singleton
 import okhttp3.*
 import okhttp3.logging.HttpLoggingInterceptor
+import java.io.File
 import java.io.FileOutputStream
 import java.nio.file.Files
 import java.nio.file.Paths
@@ -53,13 +56,14 @@ class VersionEyePlugin @Inject constructor(val configActor: ConfigActor<VersionE
                                            val taskContributor: TaskContributor) :
         BasePlugin(), ITaskContributor, IConfigActor<VersionEyeConfig> by configActor {
     private val API_KEY_PROPERTY = "versioneye.apiKey"
-    private val PROJECT_KEY_PROPERTY = "versioneye.projectKey"
     private val COLORS_PROPERTY = "ve.colors"
-    private val VERBOSE_PROPERTY = "ve.verbose"
+    private val CREATE_PROPERTY = "ve.create"
+    private val PROJECT_KEY_PROPERTY = "versioneye.projectKey"
     private val QUIET_PROPERTY = "ve.quiet"
+    private val VERBOSE_PROPERTY = "ve.verbose"
 
     private val debug = System.getProperty("ve.debug", "false").toBoolean()
-    private val fiddler = System.getProperty("ve.fiddler", "false").toBoolean()
+    private val proxy = System.getProperty("ve.proxy", "-1").toInt()
 
     private val httpClient = if (!debug) {
         OkHttpClient()
@@ -86,13 +90,12 @@ class VersionEyePlugin @Inject constructor(val configActor: ConfigActor<VersionE
 
     @Task(name = "versionEye", description = "Update and check dependencies on VersionEye")
     fun versionEye(project: Project): TaskResult {
-        if (fiddler) {
-            val port = 9898
-            log(1, "  Using Fiddler proxy 127.0.0.1:$port")
+        if (proxy != -1) {
+            log(1, "  Using proxy 127.0.0.1:$proxy")
             System.setProperty("http.proxyHost", "127.0.0.1")
             System.setProperty("https.proxyHost", "127.0.0.1")
-            System.setProperty("http.proxyPort", "$port")
-            System.setProperty("https.proxyPort", "$port")
+            System.setProperty("http.proxyPort", "$proxy")
+            System.setProperty("https.proxyPort", "$proxy")
         }
 
         val local = "${project.directory}/local.properties"
@@ -132,11 +135,25 @@ class VersionEyePlugin @Inject constructor(val configActor: ConfigActor<VersionE
 
                 // Config parameters
                 config.colors = System.getProperty(COLORS_PROPERTY, config.colors.toString()).toBoolean()
-                config.verbose = System.getProperty(VERBOSE_PROPERTY, config.verbose.toString()).toBoolean()
                 config.quiet = System.getProperty(QUIET_PROPERTY, config.quiet.toString()).toBoolean()
+                config.verbose = System.getProperty(VERBOSE_PROPERTY, config.verbose.toString()).toBoolean()
 
                 // Get pom & proceed with update
                 val pom = context.generatePom(project)
+
+                // Write the pom
+                if (config.pom) {
+                    File("pom.xml").writeText(pom)
+
+                    // Don't create a new project
+                    if (!System.getProperty(CREATE_PROPERTY, "true").toBoolean() && projectKey.isNullOrBlank()) {
+                        log(1, "  Be sure to commit pom.xml, and import your project at:")
+                        log(1, Utils.yellow("\n\t${config.baseUrl}/projects/new\n", config.colors))
+                        log(1, "  Then configure your project key.")
+                        return TaskResult()
+                    }
+                }
+
                 val result = versionEyeUpdate(if (config.name.isNotBlank()) {
                     config.name
                 } else {
@@ -145,7 +162,7 @@ class VersionEyePlugin @Inject constructor(val configActor: ConfigActor<VersionE
 
                 // Save properties
                 FileOutputStream(local).use { output ->
-                    p.store(output, "")
+                    p.store(output, null)
                 }
 
                 return result
@@ -193,15 +210,13 @@ class VersionEyePlugin @Inject constructor(val configActor: ConfigActor<VersionE
         }
 
         // Set visibility
-        if (config.visibility.isNotBlank()) {
-            if (config.visibility.equals("private", true)) {
-                requestBody.addFormDataPart("visibility", "private")
-            } else if (config.visibility.equals("public", true)) {
-                requestBody.addFormDataPart("visibility", "public")
-            }
+        if (config.visibility.isNotBlank() && config.visibility.equals("private", true)) {
+            requestBody.addFormDataPart("visibility", "private")
+        } else {
+            requestBody.addFormDataPart("visibility", "public")
         }
 
-        if (debug) {
+        if (config.temp) {
             requestBody.addFormDataPart("temp", "true")
         }
 
@@ -215,16 +230,15 @@ class VersionEyePlugin @Inject constructor(val configActor: ConfigActor<VersionE
                 .post(requestBody.build())
                 .build()
 
-        // Execute and handle reques
+        // Execute and handle request
         val response = httpClient.newCall(request).execute()
+        // Parse json response
+        val o = GsonBuilder().create().fromJson(response.body().charStream(), JsonObject::class.java)
         if (!response.isSuccessful) {
-            warn("Unexpected response from VersionEye: $response")
+            // Parse json response
+            warn("Unexpected response from VersionEye: " + (o.get("error").asString ?: response.message()))
             return TaskResult()
         } else {
-            // Parse json response
-            val builder = GsonBuilder()
-            val o = builder.create().fromJson(response.body().charStream(), JsonObject::class.java)
-
             // Get project key
             if (projectKey.isNullOrBlank()) {
                 projectKey = o.get("id").asString
@@ -384,8 +398,10 @@ class VersionEyeConfig {
     val failSet: MutableSet<Fail> = mutableSetOf(Fail.securityCheck)
     var name = ""
     var org = ""
+    var pom = false
     var quiet = false
     var team = ""
+    var temp = false
     var verbose = true
     var visibility = "public"
 

@@ -1,12 +1,20 @@
-import com.beust.kobalt.*
+
+import com.beust.kobalt.buildScript
+import com.beust.kobalt.file
 import com.beust.kobalt.plugin.packaging.assemble
 import com.beust.kobalt.plugin.publish.autoGitTag
 import com.beust.kobalt.plugin.publish.bintray
-import org.apache.maven.model.*
+import com.beust.kobalt.profile
+import com.beust.kobalt.project
+import net.thauvin.erik.kobalt.plugin.versioneye.*
+import org.apache.maven.model.Developer
+import org.apache.maven.model.License
+import org.apache.maven.model.Model
+import org.apache.maven.model.Scm
 
 val bs = buildScript {
-    plugins("net.thauvin.erik:kobalt-maven-local:")
-    repos(localMaven())
+    repos(file("K:/maven/repository"))
+    plugins("net.thauvin.erik:kobalt-maven-local:0.5.2", "net.thauvin.erik:kobalt-versioneye:0.4.5")
 }
 
 val dev by profile()
@@ -40,7 +48,7 @@ val p = project {
 
     dependencies {
         compile("com.beust:$kobaltDependency:")
-        compile("com.squareup.okhttp3:logging-interceptor:jar:3.6.0")
+        compile("com.squareup.okhttp3:logging-interceptor:jar:3.7.0")
     }
 
     dependenciesTest {
@@ -48,7 +56,13 @@ val p = project {
     }
 
     assemble {
-        mavenJars {}
+        jar {
+            fatJar = true
+        }
+
+        mavenJars {
+            fatJar = true
+        }
     }
 
     autoGitTag {
@@ -60,5 +74,9 @@ val p = project {
         publish = true
         description = "Release version $version"
         vcsTag = version
+    }
+
+    versionEye {
+        pom = true
     }
 }

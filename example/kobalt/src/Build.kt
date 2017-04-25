@@ -6,8 +6,8 @@ import net.thauvin.erik.kobalt.plugin.versioneye.*
 // ./kobaltw versionEye
 
 val bs = buildScript {
-    //plugins(file("../kobaltBuild/libs/kobalt-versioneye-0.4.5.jar"))
-    plugins("net.thauvin.erik:kobalt-versioneye:")
+    repos(file("K:/maven/repository"))
+    plugins("net.thauvin.erik:kobalt-versioneye:0.4.5")
 }
 
 val p = project {
@@ -44,8 +44,10 @@ val p = project {
         // colors = true
         // name = ""
         // org = ""
+        pom = true
         // quiet = false
         // team = ""
+        temp = true
         // verbose = true
         // visibility = "public"
 

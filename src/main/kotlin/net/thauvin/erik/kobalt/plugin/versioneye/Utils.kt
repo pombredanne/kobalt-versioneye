@@ -67,6 +67,27 @@ open class Utils {
 
         }
 
+        fun red(text: String, colors: Boolean = true): String {
+            if (!colors) {
+                return text
+            }
+            return AsciiArt.RED + text + AsciiArt.RESET
+        }
+
+        fun yellow(text: String, colors: Boolean = true): String {
+            if (!colors) {
+                return text
+            }
+            return AsciiArt.YELLOW + text + AsciiArt.RESET
+        }
+
+        fun green(text: String, colors: Boolean = true): String {
+            if (!colors) {
+                return text
+            }
+            return AsciiArt.GREEN + text + AsciiArt.RESET
+        }
+
         fun redLight(count: Int, fail: Boolean, colors: Boolean): String {
             return redLight(count.toString(), count, fail, colors)
         }
@@ -75,11 +96,11 @@ open class Utils {
         fun redLight(text: String, count: Int, fail: Boolean, colors: Boolean): String {
             if (colors) {
                 if (fail && count > 0) {
-                    return AsciiArt.RED + text + AsciiArt.RESET
+                    return red(text)
                 } else if (count > 0) {
-                    return AsciiArt.YELLOW + text + AsciiArt.RESET
+                    return yellow(text)
                 } else {
-                    return AsciiArt.GREEN + text + AsciiArt.RESET
+                    return green(text)
                 }
             }
             return text
