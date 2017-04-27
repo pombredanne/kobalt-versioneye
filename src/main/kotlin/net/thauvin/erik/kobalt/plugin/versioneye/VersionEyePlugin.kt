@@ -239,8 +239,8 @@ class VersionEyePlugin @Inject constructor(val configActor: ConfigActor<VersionE
             warn("Unexpected response from VersionEye: " + (o.get("error").asString ?: response.message()))
             return TaskResult()
         } else {
-            // Get project key
-            if (projectKey.isNullOrBlank()) {
+            // Get & set project key
+            if (projectKey.isNullOrBlank() && !config.temp) {
                 projectKey = o.get("id").asString
                 p.setProperty(PROJECT_KEY_PROPERTY, projectKey)
             }
