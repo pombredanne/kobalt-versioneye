@@ -46,7 +46,7 @@ val p = project {
     }
 
     dependencies {
-        compile("com.beust:$kobaltDependency:")
+        compileOnly("com.beust:$kobaltDependency:")
         compile("com.squareup.okhttp3:logging-interceptor:jar:3.7.0")
     }
 
@@ -76,6 +76,8 @@ val p = project {
     }
 
     versionEye {
+        org = "thauvin"
+        team = "Owners"
         pom = true
     }
 }
